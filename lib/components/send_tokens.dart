@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:web3dart/web3dart.dart';
@@ -16,44 +15,70 @@ class SendTokensPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Send Tokens'),
+        backgroundColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: recipientController,
-              decoration: const InputDecoration(
-                labelText: 'Recipient Address',
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(170, 0, 191, 255), // Blue color
+              Color.fromARGB(255, 144, 238, 144), // Lighter sea green color
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: recipientController,
+                      decoration: const InputDecoration(
+                        labelText: 'Recipient Address',
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextField(
+                      controller: amountController,
+                      decoration: const InputDecoration(
+                        labelText: 'Amount',
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                    ),
+                    const SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        String recipient = recipientController.text;
+                        double amount = double.parse(amountController.text);
+                        BigInt bigIntValue =
+                            BigInt.from(amount * pow(10, 18));
+                        print(bigIntValue);
+                        EtherAmount ethAmount = EtherAmount.fromBigInt(
+                            EtherUnit.wei, bigIntValue);
+                        print(ethAmount);
+                        // Convert the amount to EtherAmount
+                        sendTransaction(recipient, ethAmount);
+                      },
+                      child: const Text('Send'),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16.0),
-            TextField(
-              controller: amountController,
-              decoration: const InputDecoration(
-                labelText: 'Amount',
-              ),
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                String recipient = recipientController.text;
-                double amount = double.parse(amountController.text);
-                BigInt bigIntValue = BigInt.from(amount * pow(10, 18));
-                print(bigIntValue);
-                EtherAmount ethAmount =
-                    EtherAmount.fromBigInt(EtherUnit.wei, bigIntValue);
-                print(ethAmount);
-                // Convert the amount to EtherAmount
-                sendTransaction(recipient, ethAmount);
-              },
-              child: const Text('Send'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
